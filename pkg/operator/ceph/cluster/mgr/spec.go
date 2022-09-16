@@ -221,7 +221,7 @@ func (c *Cluster) makeMgrDaemonContainer(mgrConfig *mgrConfig) v1.Container {
 			"ceph-mgr",
 		},
 		Args: append(
-			opspec.DaemonFlags(c.clusterInfo, mgrConfig.DaemonID),
+			opspec.DaemonFlags(c.clusterInfo, &c.Network, mgrConfig.DaemonID),
 			// for ceph-mgr cephfs
 			// see https://github.com/ceph/ceph-csi/issues/486 for more details
 			config.NewFlag("client-mount-uid", "0"),

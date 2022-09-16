@@ -22,6 +22,7 @@ import (
 
 	"github.com/coreos/pkg/capnslog"
 	"github.com/pkg/errors"
+	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
 	cephconfig "github.com/rook/rook/pkg/daemon/ceph/config"
 	"github.com/rook/rook/pkg/operator/ceph/config"
 	"github.com/rook/rook/pkg/operator/ceph/config/keyring"
@@ -252,8 +253,8 @@ func AddVolumeMountSubPath(podSpec *v1.PodSpec, volumeMountName string) {
 }
 
 // DaemonFlags returns the command line flags used by all Ceph daemons.
-func DaemonFlags(cluster *cephconfig.ClusterInfo, daemonID string) []string {
-	return append(
+func DaemonFlags(cluster *cephconfig.ClusterInfo, spec *cephv1.NetworkSpec, daemonID string) []string {
+	flags := append(
 		config.DefaultFlags(cluster.FSID, keyring.VolumeMount().KeyringFilePath(), cluster.CephVersion),
 		config.NewFlag("id", daemonID),
 		// Ceph daemons in Rook will run as 'ceph' instead of 'root'
@@ -264,6 +265,10 @@ func DaemonFlags(cluster *cephconfig.ClusterInfo, daemonID string) []string {
 		config.NewFlag("setgroup", "ceph"),
 	)
 
+	if spec.IPFamily == cephv1.IPv6 {
+		flags = append(flags, config.NewFlag("ms-bind-ipv6", "true"))
+	}
+	return flags
 }
 
 // AdminFlags returns the command line flags used for Ceph commands requiring admin authentication.

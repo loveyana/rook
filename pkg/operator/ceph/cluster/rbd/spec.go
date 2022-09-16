@@ -92,7 +92,7 @@ func (m *Mirroring) makeMirroringDaemonContainer(daemonConfig *daemonConfig) v1.
 			"rbd-mirror",
 		},
 		Args: append(
-			opspec.DaemonFlags(m.ClusterInfo, daemonConfig.DaemonID),
+			opspec.DaemonFlags(m.ClusterInfo, nil, daemonConfig.DaemonID),
 			"--foreground",
 			"--name="+fullDaemonName(daemonConfig.DaemonID),
 		),

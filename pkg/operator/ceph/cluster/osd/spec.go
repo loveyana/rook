@@ -269,7 +269,6 @@ func (c *Cluster) makeDeployment(osdProps osdProperties, osd OSDInfo, provisionC
 	}
 
 	commonArgs = append(commonArgs, osdOnSDNFlag(c.Network, c.clusterInfo.CephVersion)...)
-
 	var command []string
 	var args []string
 	if !osd.IsDirectory && osd.IsFileStore && !osd.CephVolumeInitiated {
@@ -292,7 +291,7 @@ func (c *Cluster) makeDeployment(osdProps osdProperties, osd OSDInfo, provisionC
 			"--",
 		}
 		args = append(args,
-			opspec.DaemonFlags(c.clusterInfo, osdID)...,
+			opspec.DaemonFlags(c.clusterInfo, &c.Network, osdID)...,
 		)
 		args = append(args,
 			"--foreground",
@@ -359,7 +358,7 @@ func (c *Cluster) makeDeployment(osdProps osdProperties, osd OSDInfo, provisionC
 
 		command = []string{"ceph-osd"}
 		args = append(
-			opspec.DaemonFlags(c.clusterInfo, osdID),
+			opspec.DaemonFlags(c.clusterInfo, &c.Network, osdID),
 			"--foreground",
 			"--osd-data", osd.DataPath,
 			"--osd-uuid", osd.UUID,
